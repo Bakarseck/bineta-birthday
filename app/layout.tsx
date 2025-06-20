@@ -3,8 +3,8 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: "Bineta's Birthday !!!",
-  description: 'Created with v0',
-  generator: 'v0.dev',
+  description: 'Crée par Bakar SECK',
+  generator: 'Bakar SECK',
 }
 
 export default function RootLayout({

@@ -15,7 +15,7 @@ export default function BinetaBirthday() {
   const [isPlaying, setIsPlaying] = useState(false)
   const [audioRef, setAudioRef] = useState<HTMLAudioElement | null>(null)
 
-  const contentRef = useRef<HTMLElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setMounted(true)
@@ -63,7 +63,7 @@ export default function BinetaBirthday() {
       scale: 1,
       transition: {
         duration: 0.8,
-        ease: "easeOut",
+        ease: 'easeOut',
       },
     },
   }
@@ -292,6 +292,7 @@ export default function BinetaBirthday() {
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
         variants={containerVariants}
+        ref={contentRef}
       >
         <div className="container mx-auto px-4 py-20">
           {/* Audio Control */}

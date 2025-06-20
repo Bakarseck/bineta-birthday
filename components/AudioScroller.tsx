@@ -95,6 +95,43 @@ export default function AudioScroller({ audioSrc, title = "Écouter l'histoire",
     }
   }, [])
 
+  // Scroll progressif pendant la lecture
+  useEffect(() => {
+    let scrollInterval: NodeJS.Timeout | null = null;
+    if (isPlaying && scrollTargetRef && scrollTargetRef.current && audioRef.current && duration > 0) {
+      const target = scrollTargetRef.current;
+      const rect = target.getBoundingClientRect();
+      const startY = window.scrollY;
+      const endY = rect.top + window.scrollY;
+      const totalScroll = endY - startY;
+      const scrollStartTime = Date.now();
+      const scrollDuration = (duration - audioRef.current.currentTime) * 1000;
+
+      function animateScroll() {
+        if (!isPlaying || !audioRef.current) return;
+        const elapsed = Date.now() - scrollStartTime;
+        const progress = Math.min(elapsed / scrollDuration, 1);
+        window.scrollTo({
+          top: startY + totalScroll * progress,
+          behavior: 'auto',
+        });
+        if (progress < 1 && isPlaying) {
+          scrollInterval = setTimeout(animateScroll, 30);
+        }
+      }
+      animateScroll();
+    }
+    return () => {
+      if (scrollInterval) clearTimeout(scrollInterval);
+    };
+  }, [isPlaying, duration, scrollTargetRef]);
+
+  const scrollToPoem = () => {
+    if (scrollTargetRef && scrollTargetRef.current) {
+      scrollTargetRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  }
+
   const togglePlay = () => {
     if (audioRef.current) {
       if (isPlaying) {
@@ -109,6 +146,7 @@ export default function AudioScroller({ audioSrc, title = "Écouter l'histoire",
             }
           }, 500)
         }
+        scrollToPoem(); // Scroll vers le poème au démarrage de la lecture
         audioRef.current.play()
       }
       setIsPlaying(!isPlaying)
