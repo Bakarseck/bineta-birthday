@@ -1,9 +1,10 @@
 "use client"
 
 import { motion, useScroll, useTransform } from "framer-motion"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
 import { Heart, Sparkles, Star, Gift, Cake, Crown, Play, Pause, Volume2 } from "lucide-react"
+import AudioScroller from "@/components/AudioScroller"
 
 export default function BinetaBirthday() {
   const [mounted, setMounted] = useState(false)
@@ -14,44 +15,11 @@ export default function BinetaBirthday() {
   const [isPlaying, setIsPlaying] = useState(false)
   const [audioRef, setAudioRef] = useState<HTMLAudioElement | null>(null)
 
+  const contentRef = useRef<HTMLElement>(null)
+
   useEffect(() => {
     setMounted(true)
   }, [])
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const audio = new Audio("/cheikh-amadou-bamba.mp3")
-      setAudioRef(audio)
-
-      audio.addEventListener("ended", () => setIsPlaying(false))
-
-      return () => {
-        audio.removeEventListener("ended", () => setIsPlaying(false))
-      }
-    }
-  }, [])
-
-  const toggleAudio = () => {
-    if (audioRef) {
-      if (isPlaying) {
-        audioRef.pause()
-        setIsPlaying(false)
-      } else {
-        audioRef.play()
-        setIsPlaying(true)
-
-        // Scroll automatique vers la section du poème
-        const poemSection = document.getElementById("poem-section")
-        if (poemSection) {
-          poemSection.scrollIntoView({
-            behavior: "smooth",
-            block: "start",
-            inline: "nearest",
-          })
-        }
-      }
-    }
-  }
 
   const poemLines = [
     "Joyeux anniversaire ma polytechnicienne hors pair.",
@@ -127,9 +95,8 @@ export default function BinetaBirthday() {
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
             }}
-            variants={floatingVariants}
+            initial="initial"
             animate="animate"
-            transition={{ delay: i * 0.3 }}
           >
             {i % 4 === 0 ? (
               <Heart className="w-6 h-6 text-pink-300 fill-current opacity-70" />
@@ -328,17 +295,15 @@ export default function BinetaBirthday() {
       >
         <div className="container mx-auto px-4 py-20">
           {/* Audio Control */}
-          <motion.div className="max-w-4xl mx-auto text-center mb-8" variants={lineVariants}>
-            <motion.button
-              onClick={toggleAudio}
-              className="inline-flex items-center space-x-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
-              <Volume2 className="w-5 h-5" />
-              <span>{isPlaying ? "Pause la voix off" : "Écouter le poème en voix off"}</span>
-            </motion.button>
+
+          <AudioScroller
+            audioSrc="/cheikh-ahmadou-bamba.mp3"
+            title="🎤 Récité par Bakar avec amour"
+            scrollTargetRef={contentRef as React.RefObject<HTMLElement>}
+            description="Cliquez pour écouter"
+          />
+
+          <motion.div className="max-w-4xl mx-auto text-center mb-20" >
             <motion.p
               className="text-sm text-gray-600 mt-3"
               initial={{ opacity: 0 }}
@@ -348,7 +313,7 @@ export default function BinetaBirthday() {
               🎤 Récité par Bakar avec amour
             </motion.p>
           </motion.div>
-          <motion.div className="max-w-4xl mx-auto text-center mb-16" variants={lineVariants}>
+          <motion.div className="max-w-4xl mx-auto text-center mb-16">
             <h3 className="text-5xl md:text-6xl font-bold mb-8 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
               Un poème pour toi
             </h3>
@@ -365,9 +330,8 @@ export default function BinetaBirthday() {
               <motion.div
                 key={index}
                 variants={lineVariants}
-                className={`text-center ${
-                  line === "" ? "h-6" : "text-xl md:text-2xl leading-relaxed text-gray-800 font-medium"
-                }`}
+                className={`text-center ${line === "" ? "h-6" : "text-xl md:text-2xl leading-relaxed text-gray-800 font-medium"
+                  }`}
                 whileHover={{
                   scale: 1.05,
                   color: "#ec4899",
