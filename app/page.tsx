@@ -297,7 +297,7 @@ export default function BinetaBirthday() {
           {/* Audio Control */}
 
           <AudioScroller
-            audioSrc="/DJI_44_20250620_074035.WAV"
+            audioSrc="/bineta.wav"
             title="🎤 Récité par Bakar avec amour"
             scrollTargetRef={contentRef as React.RefObject<HTMLElement>}
             description="Cliquez pour écouter"
